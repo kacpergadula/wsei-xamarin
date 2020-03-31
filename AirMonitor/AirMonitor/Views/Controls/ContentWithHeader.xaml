@@ -5,8 +5,8 @@
              x:Name="RootView">
     <Label
         Text="{Binding Path=Title, Source={x:Reference RootView}}"
-        FontSize="14"
-        TextColor="Black" />
+        Style="{StaticResource TitleStyle}"
+        />
     <ContentView
         Content="{Binding Path=ControlContent, Source={x:Reference RootView}}"/>
 </StackLayout>
