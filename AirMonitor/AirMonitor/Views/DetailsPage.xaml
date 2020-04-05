@@ -6,57 +6,46 @@
              mc:Ignorable="d"
              x:Class="AirMonitor.Views.DetailsPage"
              xmlns:controls="clr-namespace:AirMonitor.Views.Controls"
-             BackgroundColor="#f9f9f9">
+             xmlns:viewModels="clr-namespace:AirMonitor.ViewModels"
+             xmlns:converters="clr-namespace:AirMonitor.Converters"
+             Title="Details Page"
+             Style="{StaticResource DetailsPageStyle}">
+    <ContentPage.BindingContext>
+        <viewModels:DetailsViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ValueToPercentConverter x:Key="ValueToPercent"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <Grid>
-            <StackLayout
-                Padding="24"
-                Spacing="12">
-                <Frame
-                    Style="{StaticResource CaqiFrameStyle}"
-                    CornerRadius="50"
-                    Padding="0"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    HeightRequest="100"
-                    WidthRequest="100"
-                    HasShadow="False"
-                    BackgroundColor="#33f069"
-                    BorderColor="Gray">
-                    <Label
-                     HorizontalTextAlignment="Center"
-                        VerticalTextAlignment="Center">
+            <StackLayout Style="{StaticResource DetailsLayoutStyle}">
+                <Frame Style="{StaticResource CaqiFrameStyle}">
+                    <Label Style="{StaticResource CenteredTextStyle}">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span
-                                    Text="56"
-                                    FontAttributes="Bold"
-                                    TextColor="Black"
-                                    FontSize="32"/>
+                                    Text="{Binding CaqiValue}"
+                                    Style="{StaticResource CaqiValueSpanStyle}"/>
                                 <Span
                                     Text="{x:Static x:Environment.NewLine}"/>
                                 <Span
                                     Text="CAQI"
-                                    FontSize="12"
-                                    TextColor="DarkSlateGray"/>
+                                    Style="{StaticResource CaqiUnitSpanStyle}"/>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
                 </Frame>
                 <Label
-                    Text="Świetna jakość!"
-                    Style="{StaticResource TitleStyle}"
-                    HorizontalTextAlignment="Center"/>
+                    Text="{Binding CaqiTitle}"
+                    Style="{StaticResource CaqiTitleStyle}"/>
                 <Label
-                    Text="Możesz bezpiecznie wyjść z domu bez swojej maski anty-smogowej i nie bać się o swoje zdrowie."
-                    FontSize="14"
-                    TextColor="Black" />
+                    Text="{Binding CaqiDescription}"
+                    Style="{StaticResource CaqiDescriptionStyle}" />
 
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+                <BoxView Style="{StaticResource HorizontalSeparatorStyle}"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -70,17 +59,14 @@
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span
-                                            Text="34"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            Text="{Binding Pm25Value}"
+                                            Style="{StaticResource NormalTextSpanStyle}"/>
                                         <Span
                                             Text=" mg/m3 "
-                                            TextColor="Black"
-                                            FontSize="14"/>
+                                            Style="{StaticResource SmallTextSpanStyle}"/>
                                         <Span
-                                            Text="(137%)"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            Text="{Binding Pm25Percent, StringFormat='({0}%)'}"
+                                            Style="{StaticResource NormalTextSpanStyle}"/>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -89,10 +75,7 @@
                 
                     <BoxView
                         Grid.Column="1"
-                        VerticalOptions="Fill"
-                        HorizontalOptions="Center"
-                        WidthRequest="1"
-                        BackgroundColor="LightGray"/>
+                        Style="{StaticResource VerticalSeparatorStyle}" />
                     
                     
                     <controls:ContentWithHeader
@@ -103,17 +86,14 @@
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span
-                                            Text="67"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            Text="{Binding Pm10Value}"
+                                            Style="{StaticResource NormalTextSpanStyle}"/>
                                         <Span
                                             Text=" mg/m3 "
-                                            TextColor="Black"
-                                            FontSize="14"/>
+                                            Style="{StaticResource SmallTextSpanStyle}"/>
                                         <Span
-                                            Text="(135%)"
-                                            TextColor="Black"
-                                            FontSize="20"/>
+                                            Text="{Binding Pm10Percent, StringFormat='({0}%)'}"
+                                            Style="{StaticResource NormalTextSpanStyle}"/>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -122,57 +102,40 @@
                 </Grid>
 
                 
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+                <BoxView Style="{StaticResource HorizontalSeparatorStyle}"/>
                 <controls:ContentWithHeader Title="Wilgotność">
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="95%"
-                                FontSize="20"
-                                TextColor="Black" />
+                                Text="{Binding HumidityValue, Converter={StaticResource ValueToPercent}, StringFormat='{0}%'}"
+                                Style="{StaticResource NormalTextLabelStyle}"/>
                             <Slider
-                                Value="0.95"
-                                MaximumTrackColor="Gray"
-                                MinimumTrackColor="CornflowerBlue"
-                                ThumbColor="CornflowerBlue"/>
+                                Value="{Binding HumidityValue}"
+                                Style="{StaticResource SliderStyle}"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
                 
-                <BoxView
-                    HeightRequest="1"
-                    HorizontalOptions="Fill"
-                    BackgroundColor="LightGray"/>
+                <BoxView Style="{StaticResource HorizontalSeparatorStyle}"/>
                 <controls:ContentWithHeader Title="Ciśnienie">
                     <controls:ContentWithHeader.ControlContent>
                         <StackLayout>
                             <Label
-                                Text="1026 hPa"
-                                FontSize="20"
-                                TextColor="Black" />
+                                Text="{Binding PressureValue, StringFormat='{0} hPa'}"
+                                Style="{StaticResource NormalTextLabelStyle}"/>
                             <!-- Set Maximum before Minimum in Slider -->
                             <Slider
                                 Maximum="1100"
                                 Minimum="900"
                                 Value="1026"
-                                MaximumTrackColor="Gray"
-                                MinimumTrackColor="CornflowerBlue"
-                                ThumbColor="CornflowerBlue"/>
+                                Style="{StaticResource SliderStyle}"/>
                         </StackLayout>
                     </controls:ContentWithHeader.ControlContent>
                 </controls:ContentWithHeader>
             </StackLayout>
 
             <ImageButton
-                Padding="12,24"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                WidthRequest="48"
-                HeightRequest="72"
-                BackgroundColor="Transparent"
+                Style="{StaticResource HelpButtonStyle}"
                 Source="baseline_help_outline_black_24.png"
                 Clicked="Help_Clicked"/>
         </Grid>

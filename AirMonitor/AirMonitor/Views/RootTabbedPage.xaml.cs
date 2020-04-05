@@ -12,7 +12,7 @@ namespace AirMonitor.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RootTabbedPage : TabbedPage
     {
-        public RootTabbedPage ()
+        public RootTabbedPage()
         {
             InitializeComponent();
         }
