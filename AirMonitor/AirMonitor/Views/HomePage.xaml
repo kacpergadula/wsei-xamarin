@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AirMonitor.Views.HomePage"
              Title="Home Page">
-    <Button
-        Text="Go to details"
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Command="{Binding GoToDetailsCommand}"
-        />
+    <ListView ItemsSource="{Binding Items}" SelectionMode="None">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextCell Text="{Binding Address.Description}"
+                     Detail="ToDo Later"/>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
 </ContentPage>

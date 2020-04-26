@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace AirMonitor.ViewModels
 {
-    public class DetailsViewModel : INotifyPropertyChanged
+    public class DetailsViewModel : BaseViewModel
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,15 +18,6 @@ namespace AirMonitor.ViewModels
         {
             get => _caqiValue;
             set => SetProperty(ref _caqiValue, value);
-            /* SetProperty is a helper function to shorten our code. This is equivalent of:
-             * set
-             * {
-             *  if (_caqiValue == value) return; // Don't reassign value and notify view if value didn't change
-             *
-             *  _caqiValue = value;
-             *  RaisePropertyChanged();
-             * }
-             */
         }
 
         private string _caqiTitle = "Świetna jakość!";
