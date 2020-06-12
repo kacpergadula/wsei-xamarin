@@ -29,22 +29,31 @@ namespace AirMonitor.ViewModels
         private async Task Initialize()
         {
             //var location = await Geolocation.GetLastKnownLocationAsync();
-            var location = new Location(50,20);
+            var location = new Location(50, 20);
             var installations = await GetInstallations(location, maxResults: 3);
-            Items = new List<Installation>(installations);
+            var data = await GetMeasurementsForInstallations(installations);
+            Items = new List<Measurement>(data);
         }
 
-        private List<Installation> _items;
-
-        public List<Installation> Items
+        private List<Measurement> _items;
+        public List<Measurement> Items
         {
             get => _items;
             set => SetProperty(ref _items, value);
         }
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set => SetProperty(ref _isBusy, value);
+        }
+
+
+
         private async Task<IEnumerable<Installation>> GetInstallations(Location location, double maxDistanceInKm = 3, int maxResults = -1)
         {
-            if(location == null)
+            if (location == null)
             {
                 System.Diagnostics.Debug.WriteLine("No location data.");
                 return null;
@@ -57,14 +66,46 @@ namespace AirMonitor.ViewModels
                 { "maxResults" , maxResults}
             });
 
-            var url = GetAirlyApuUrl(App.AirlyApiInstallationUrl, query);
+            var url = GetAirlyApiUrl(App.AirlyApiInstallationUrl, query);
 
             var response = await GetHttpResponseAsync<IEnumerable<Installation>>(url);
 
             return response;
         }
 
-        private string GetQuery(IDictionary<string,object> args)
+
+        private async Task<IEnumerable<Measurement>> GetMeasurementsForInstallations(IEnumerable<Installation> installations)
+        {
+            if (installations == null)
+            {
+                System.Diagnostics.Debug.WriteLine("No installations data.");
+                return null;
+            }
+
+            var measurements = new List<Measurement>();
+
+            foreach (var installation in installations)
+            {
+                var query = GetQuery(new Dictionary<string, object>
+                {
+                    { "installationId", installation.Id }
+                });
+                var url = GetAirlyApiUrl(App.AirlyApiMeasurementUrl, query);
+
+                var response = await GetHttpResponseAsync<Measurement>(url);
+
+                if (response != null)
+                {
+                    response.Installation = installation;
+                    response.CurrentDisplayValue = (int)Math.Round(response.Current?.Indexes?.FirstOrDefault()?.Value ?? 0);
+                    measurements.Add(response);
+                }
+            }
+
+            return measurements;
+        }
+
+        private string GetQuery(IDictionary<string, object> args)
         {
             if (args == null) return null;
 
@@ -72,7 +113,7 @@ namespace AirMonitor.ViewModels
 
             foreach (var arg in args)
             {
-                if(arg.Value is double number)
+                if (arg.Value is double number)
                 {
                     query[arg.Key] = number.ToString(CultureInfo.InvariantCulture);
                 }
@@ -85,7 +126,7 @@ namespace AirMonitor.ViewModels
             return query.ToString();
         }
 
-        private string GetAirlyApuUrl(string path, string query)
+        private string GetAirlyApiUrl(string path, string query)
         {
             var builder = new UriBuilder(App.AirlyApiUrl);
             builder.Port = -1;
@@ -114,7 +155,7 @@ namespace AirMonitor.ViewModels
                 var client = GetHttpClient();
                 var response = await client.GetAsync(url);
 
-                if(response.Headers.TryGetValues("X-RateLimit-day", out var daylimit) &&
+                if (response.Headers.TryGetValues("X-RateLimit-day", out var daylimit) &&
                     response.Headers.TryGetValues("X-RateLimit-Reaming-day", out var dayLimitTeaming))
                 {
                     System.Diagnostics.Debug.WriteLine($"Day limit : {daylimit?.FirstOrDefault()}, reaining : {dayLimitTeaming?.FirstOrDefault()}");
