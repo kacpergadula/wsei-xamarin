@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Linq;
 using AirMonitor.Moduls;
+using Xamarin.Forms.Maps;
 
 namespace AirMonitor.ViewModels
 {
@@ -25,14 +26,26 @@ namespace AirMonitor.ViewModels
             Initialize();
         }
 
+        private List<MapLocation> _locations;
+        public List<MapLocation> Locations
+        {
+            get => _locations;
+            set => SetProperty(ref _locations, value);
+        }
 
         private async Task Initialize()
         {
-            //var location = await Geolocation.GetLastKnownLocationAsync();
-            var location = new Location(50, 20);
-            var installations = await GetInstallations(location, maxResults: 3);
+            var location = await Geolocation.GetLastKnownLocationAsync();
+            //var location = new Location(50, 20);
+            var installations = await GetInstallations(location, maxResults: 4);
             var data = await GetMeasurementsForInstallations(installations);
             Items = new List<Measurement>(data);
+            Locations = Items.Select(x => new MapLocation
+            {
+                Address = x.Installation.Address.Description,
+                Description = "CAQI: " + x.CurrentDisplayValue,
+                Position = new Position(x.Installation.location.Latitude, x.Installation.location.Longitude)
+            }).ToList();
         }
 
         private List<Measurement> _items;

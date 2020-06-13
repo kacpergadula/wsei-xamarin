@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AirMonitor.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,10 @@ namespace AirMonitor.Views
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class MapPage : ContentPage
 	{
-		public MapPage ()
+		public MapPage()
 		{
-			InitializeComponent ();
+			InitializeComponent();
+			BindingContext = new HomeViewModel(Navigation);
 		}
 	}
 }
