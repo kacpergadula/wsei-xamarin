@@ -10,4 +10,5 @@
     <Color x:Key="CaqiFrameBorderColor">Gray</Color>
     <Color x:Key="SliderAccentColor">CornflowerBlue</Color>
     <Color x:Key="SliderTrackBackgroundColor">Gray</Color>
+    <Color x:Key="ListViewElemet">#EB2DD0</Color>
 </ResourceDictionary>
